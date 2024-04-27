@@ -1,25 +1,52 @@
-import logo from './logo.svg';
-import './App.css';
 
-function App() {
+import React, { useEffect, useState } from 'react';
+import LoginForm from "./LoginForm";
+import SignupForm from "./SignupForm";
+import ProductsList from "./ProductsList";
+import Home from "./Home";
+import ProductPage from "./ProductPage";
+import {Route, Routes} from "react-router-dom";
+import Varieties from "./Varieties";
+import Cart from "./Cart";
+import AdminPanel from "./AdminPanel";
+import ProductsAdminPage from "./admin-products/ProductsAdminPage";
+import fetchVarietiesData from './fetchVarietiesData';
+import Payment from './Payment';
+export default function App()
+{
+
+  const [varieties, setVarieties] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await fetchVarietiesData();
+      setVarieties(data);
+    };
+
+    fetchData();
+  }, []);
+  
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+    <>
 
-export default App;
+    <Routes>
+    <Route path="/" element={<Home/>}/>
+    <Route path="/login" element={<LoginForm/>}/>
+    <Route path="/signup" element={<SignupForm/>}/>
+    <Route path="/products" element={<ProductsList/>}/>
+    <Route path="/cart" element={<Cart/>}/>
+    <Route path="/admin" element={<AdminPanel/>}/>
+    <Route path="/payment" element={<Payment />} />
+    <Route path="/admin/products" element={<ProductsAdminPage/>}/>
+
+    {
+  varieties.map((product) => (
+    <Route key={product.id} path={`/products/${product.id}`} element={<ProductPage product={product} />} />
+  ))
+}
+    </Routes>
+    
+
+    </>
+  )
+}
